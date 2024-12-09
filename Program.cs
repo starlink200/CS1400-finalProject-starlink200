@@ -36,6 +36,7 @@ internal class Program
         {
             outputFile.WriteLine($"Serving Stats");
         }
+        acesPerSetPercentage(getServeNumbers(teamPicked), teamPicked);
     }
     static void programIntro()
     {
@@ -171,19 +172,26 @@ internal class Program
         
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Hitting percentage: {(hittingStats.kills - hittingStats.error)/hittingStats.attacks}");
+            outputFile.WriteLine($" Hitting percentage: {(hittingStats.kills - hittingStats.error)/hittingStats.attacks:N3}");
         }
         return (hittingStats.kills - hittingStats.error)/hittingStats.attacks;
     }
 
+    static (double, double, double) getServeNumbers(string whichTeam)
+    {
+        (double attempts, double aces, double errors) serveStats;
+        serveStats = askForNumbers("service", "aces", whichTeam);
+        return serveStats;
+    }
+
     //ace percentage is the (aces - errors)/attempts, similar to hitting it is just a decimal going to the thousandths
-    static double acesPerSetPercentage(int serves, int aces, int error, string whichTeam)
+    static double acesPerSetPercentage((double serves, double aces, double error) serveStats, string whichTeam)
     {
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Ace percentage: {(aces - error) / serves}");
+            outputFile.WriteLine($" Ace percentage: {(serveStats.aces - serveStats.error) / serveStats.serves:N3}");
         }
-        return (aces - error) / serves;
+        return (serveStats.aces - serveStats.error) / serveStats.serves;
     }
 
     //getDigNumbers() will use askForNumbers() to get raw data regarding defensive stats
@@ -200,7 +208,7 @@ internal class Program
     {
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Dig percentage: {(digNumbers.digs - digNumbers.errors) / digNumbers.attempts}");
+            outputFile.WriteLine($" Dig percentage: {(digNumbers.digs - digNumbers.errors) / digNumbers.attempts:N3}");
         }
 
         return (digNumbers.digs - digNumbers.errors) / digNumbers.attempts;
@@ -212,14 +220,14 @@ internal class Program
     static double avgDigScore(double attempts, string whichTeam)
     {
         bool answer = false;
-        int num;
-        int sumDigScore = 0;
+        double num;
+        double sumDigScore = 0;
         for(int i = 0; i < attempts; i++)
         {
             Console.WriteLine($"Please give dig score number {i + 1}:");
             do
             {
-                answer = int.TryParse(Console.ReadLine(), out num);
+                answer = double.TryParse(Console.ReadLine(), out num);
                 if(!answer || num < 0 || num > 3)
                 {
                     Console.WriteLine("Please give a whole number between 0 and 3");
@@ -233,7 +241,7 @@ internal class Program
         }
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Dig Score: {sumDigScore / attempts}");
+            outputFile.WriteLine($" Dig Score: {sumDigScore / attempts:N2}");
         }
         return sumDigScore / attempts;
     }
