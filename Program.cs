@@ -1,4 +1,20 @@
-﻿using System.Dynamic;
+﻿/**************************************
+* Name: Caleb Roskelley
+* Project: Final CS1400 Project
+*
+* What's Left:
+*  Requirements
+*   const
+*   pass-by-reference (in/ref/out)
+*   2d or jagged arrays
+*   switch
+*   string formatting
+*  Finishing Program:
+*   Creating overall avg
+*   RPI
+*   Comparing Teams
+*************************************/
+using System.Dynamic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -6,43 +22,57 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        List<string> teamNames = new List<string>();
-        string[] readTeamNameList = File.ReadAllLines("TeamNameList.txt");
-        //make a string[] reading from a file for team names, then put them in a list
-        //storing the names in the file means that they won't be permantly lost when you
-        //restart the program
-        foreach(string name in readTeamNameList)
+        //a bool which will be used when checking if the user has more data to put in
+        bool doAgain = false;
+        do
         {
-            teamNames.Add(name);
-        }
 
-        Console.Clear();
-        programIntro();
-        //make a variable that for the duration of this log will be one team
-        string teamPicked = getTeamName(teamNames);
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
-        {
-            outputFile.WriteLine($"Hitting Stats");
+            Console.Clear();
+            programIntro();
+            
+            List<string> teamNames = new List<string>();
+            string[] readTeamNameList = File.ReadAllLines("TeamNameList.txt");
+            //make a string[] reading from a file for team names, then put them in a list
+            //storing the names in the file means that they won't be permantly lost when you
+            //restart the program
+            foreach(string name in readTeamNameList)
+            {
+                teamNames.Add(name);
+            }
+            //make a variable that for the duration of this log will be one team
+            string teamPicked = getTeamName(teamNames);
+
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+            {
+                outputFile.WriteLine($"Hitting Stats");
+            }
+            hitPercentage(getHitNumbers(teamPicked), teamPicked);
+
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+            {
+                outputFile.WriteLine($"Defensive Stats");
+            }
+            (double attempts, double digs, double errors) digStats = getDigNumbers(teamPicked);
+            digPercentages(digStats, teamPicked);
+            avgDigScore(digStats.attempts, teamPicked);
+
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+            {
+                outputFile.WriteLine($"Serving Stats");
+            }
+            acesPerSetPercentage(getServeNumbers(teamPicked), teamPicked);
+            doAgain = moreStats();
         }
-        hitPercentage(getHitNumbers(teamPicked), teamPicked);
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
-        {
-            outputFile.WriteLine($"Defensive Stats");
-        }
-        (double attempts, double digs, double errors) digStats = getDigNumbers(teamPicked);
-        digPercentages(digStats, teamPicked);
-        avgDigScore(digStats.attempts, teamPicked);
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
-        {
-            outputFile.WriteLine($"Serving Stats");
-        }
-        acesPerSetPercentage(getServeNumbers(teamPicked), teamPicked);
+        while(doAgain);
     }
     static void programIntro()
     {
         Console.WriteLine("Hello, this program will allow you to input data for volleyball stats and this will calculate the stats and record them!");
     }
 
+    //getTeamName() is the method that allows the user to select which team they will be inputing stats for
+    //it will use a list to display the options and then return a string which is a teams name, should correspond
+    //with one of the text files
     static string getTeamName(List<string> nameList)
     {
         int i = 0;
@@ -73,9 +103,11 @@ internal class Program
         return nameList[num - 1];
     }
 
+    //makeNewTeam() will ask the user for the name of their team and create a file to store that teams stats in
+    //as well as add their name to the file that contains all of the team names
     static string makeNewTeam()
     {
-        Console.WriteLine("What is the name of your team/player?");
+        Console.WriteLine("What is the name of your team?");
         string newTeam = Console.ReadLine();
         //creates new file with that team name and leaves a basic message
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{newTeam}.txt"), true))
@@ -99,7 +131,7 @@ internal class Program
         bool userInput = false;
         double num;
 
-        Console.WriteLine($"Please provide the number of {attemptName} attempts this player/team had");
+        Console.WriteLine($"Please provide the number of {attemptName} attempts your team had");
         do
         {
             userInput = double.TryParse(Console.ReadLine(), out num);
@@ -116,7 +148,7 @@ internal class Program
             outputFile.WriteLine($" {stats.attempts} {attemptName} attempts.");
         }
         
-        Console.WriteLine($"Please provide the number of {action} this player/team got");
+        Console.WriteLine($"Please provide the number of {action} your team got");
         do
         {
             userInput = double.TryParse(Console.ReadLine(), out num);
@@ -133,7 +165,7 @@ internal class Program
             outputFile.WriteLine($" {stats.action} {action}.");
         }
 
-        Console.WriteLine($"Please provide the number of {attemptName} errors this player/team had");
+        Console.WriteLine($"Please provide the number of {attemptName} errors your team had");
         do
         {
             userInput = double.TryParse(Console.ReadLine(), out num);
@@ -154,7 +186,6 @@ internal class Program
     }
     
     //getHitNumbers() will collect the raw data from the user by using the askForNumbers method
-
     static (double, double, double) getHitNumbers(string whichTeam)
     {
         (double kills, double attacks, double errors) hittingStats;
@@ -177,6 +208,7 @@ internal class Program
         return (hittingStats.kills - hittingStats.error)/hittingStats.attacks;
     }
 
+    //getServeNumers() will collect the raw data concerning serving from the user
     static (double, double, double) getServeNumbers(string whichTeam)
     {
         (double attempts, double aces, double errors) serveStats;
@@ -244,5 +276,30 @@ internal class Program
             outputFile.WriteLine($" Dig Score: {sumDigScore / attempts:N2}");
         }
         return sumDigScore / attempts;
+    }
+
+    static bool moreStats()
+    {
+        bool validAnswer = false;
+        int num;
+        Console.WriteLine("Would you like to input more stats for a seperate game?");
+        do
+        {
+            Console.WriteLine("1: Yes");
+            Console.WriteLine("2: No");
+            validAnswer = int.TryParse(Console.ReadLine(), out num);
+            if(!validAnswer || num < 1 || num > 2)
+            {
+                Console.WriteLine("Please give a valid answer by using the options corresponding number");
+            }
+        }
+        while(!validAnswer || num < 1 || num > 2);
+        switch(num)
+        {
+            case 1:
+                return true;
+            default:
+                return false;
+        }
     }
 }
