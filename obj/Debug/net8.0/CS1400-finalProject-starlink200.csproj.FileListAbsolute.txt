@@ -1,0 +1,15 @@
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\bin\Debug\net8.0\CS1400-finalProject-starlink200.exe
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\bin\Debug\net8.0\CS1400-finalProject-starlink200.deps.json
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\bin\Debug\net8.0\CS1400-finalProject-starlink200.runtimeconfig.json
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\bin\Debug\net8.0\CS1400-finalProject-starlink200.dll
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\bin\Debug\net8.0\CS1400-finalProject-starlink200.pdb
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.AssemblyInfoInputs.cache
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.AssemblyInfo.cs
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.csproj.CoreCompileInputs.cache
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.sourcelink.json
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.dll
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\refint\CS1400-finalProject-starlink200.dll
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.pdb
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\CS1400-finalProject-starlink200.genruntimeconfig.cache
+C:\Users\caleb\my-code-dir\CS1400-finalProject-starlink200\obj\Debug\net8.0\ref\CS1400-finalProject-starlink200.dll
