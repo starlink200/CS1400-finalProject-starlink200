@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CS1400-finalProject-starlink200")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd00ec028fd76ee12989b3ae1f143278a609adb7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64e2dc6de7ff1e6654c413db0751d412e3ff3b79")]
 [assembly: System.Reflection.AssemblyProductAttribute("CS1400-finalProject-starlink200")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CS1400-finalProject-starlink200")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

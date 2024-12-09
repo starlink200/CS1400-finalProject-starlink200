@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 internal class Program
 {
-    public static void Main(string[] args)
+    private static void Main(string[] args)
     {
         List<string> teamNames = new List<string>();
         string[] readTeamNameList = File.ReadAllLines("TeamNameList.txt");
@@ -20,8 +20,22 @@ internal class Program
         programIntro();
         //make a variable that for the duration of this log will be one team
         string teamPicked = getTeamName(teamNames);
-        getHitNumbers(teamPicked);
-        Console.WriteLine(avgDigScore(5, teamPicked));
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+        {
+            outputFile.WriteLine($"Hitting Stats");
+        }
+        hitPercentage(getHitNumbers(teamPicked), teamPicked);
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+        {
+            outputFile.WriteLine($"Defensive Stats");
+        }
+        (double attempts, double digs, double errors) digStats = getDigNumbers(teamPicked);
+        digPercentages(digStats, teamPicked);
+        avgDigScore(digStats.attempts, teamPicked);
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{teamPicked}.txt"), true))
+        {
+            outputFile.WriteLine($"Serving Stats");
+        }
     }
     static void programIntro()
     {
@@ -76,35 +90,75 @@ internal class Program
         return newTeam;
     }
 
-    //getHitNumbers() will collect the raw data from the user, then use the hitPercentage() method to make meaning of the data
-    //then write it to the file for whatever team it may be
+    //to avoid having to use a huge amount of repitious code to get raw data for each actions(hitting, serving, digging)
+    //the askForNumbers() method will take in 2 strings the name of what they are attempting i.e attacking and the goal action i.e. kills
+    static (double, double, double) askForNumbers(string attemptName, string action, string whichTeam)
+    {
+        (double attempts, double action, double errors) stats;
+        bool userInput = false;
+        double num;
+
+        Console.WriteLine($"Please provide the number of {attemptName} attempts this player/team had");
+        do
+        {
+            userInput = double.TryParse(Console.ReadLine(), out num);
+            if(!userInput)
+            {
+                Console.WriteLine("Please give a valid number");
+            }
+
+        }
+        while(!userInput);
+        stats.attempts = num;
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
+        {
+            outputFile.WriteLine($" {stats.attempts} {attemptName} attempts.");
+        }
+        
+        Console.WriteLine($"Please provide the number of {action} this player/team got");
+        do
+        {
+            userInput = double.TryParse(Console.ReadLine(), out num);
+            if(!userInput)
+            {
+                Console.WriteLine("Please give a valid number");
+            }
+
+        }
+        while(!userInput);
+        stats.action = num;
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
+        {
+            outputFile.WriteLine($" {stats.action} {action}.");
+        }
+
+        Console.WriteLine($"Please provide the number of {attemptName} errors this player/team had");
+        do
+        {
+            userInput = double.TryParse(Console.ReadLine(), out num);
+            if(!userInput)
+            {
+                Console.WriteLine("Please give a valid number");
+            }
+
+        }
+        while(!userInput);
+        stats.errors = num;
+        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
+        {
+            outputFile.WriteLine($" {stats.errors} {attemptName} errors.");
+        }
+
+        return stats;
+    }
+    
+    //getHitNumbers() will collect the raw data from the user by using the askForNumbers method
 
     static (double, double, double) getHitNumbers(string whichTeam)
     {
         (double kills, double attacks, double errors) hittingStats;
-
-        Console.WriteLine("Please provide the number of attack attempts this player/team had");
-        hittingStats.attacks = Convert.ToDouble(Console.ReadLine());
-        //($"{whichTeam}.txt", $"{hittingStats.attacks} attack attempts were made");
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
-        {
-            outputFile.WriteLine($"{hittingStats.attacks} attack attempts.");
-        }
-        
-        Console.WriteLine("Please provide the number of kills this player/team got");
-        hittingStats.kills = Convert.ToDouble(Console.ReadLine());
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
-        {
-            outputFile.WriteLine($"{hittingStats.kills} kills.");
-        }
-
-        Console.WriteLine("Please provide the number of attack errors this player/team had");
-        hittingStats.errors = Convert.ToDouble(Console.ReadLine());
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
-        {
-            outputFile.WriteLine($"{hittingStats.errors} attacking errors.");
-        }
-        
+    
+        hittingStats = askForNumbers("attack", "kills", whichTeam);
         return hittingStats;
 
     }
@@ -112,12 +166,12 @@ internal class Program
     //hitting percentage is calculated by doing (kills - errors)/total number of attacks
     //also even though it's called a percentage it is left as a decimal that goes to the thousandths
     //like baseball batting average
-    static double hitPercentage((double kills, double attacks, double error) hittingStats, string whichTeam)
+    static double hitPercentage((double attacks, double kills, double error) hittingStats, string whichTeam)
     {
         
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Hitting percentage: ");
+            outputFile.WriteLine($"Hitting percentage: {(hittingStats.kills - hittingStats.error)/hittingStats.attacks}");
         }
         return (hittingStats.kills - hittingStats.error)/hittingStats.attacks;
     }
@@ -127,20 +181,29 @@ internal class Program
     {
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Ace percentage: ");
+            outputFile.WriteLine($"Ace percentage: {(aces - error) / serves}");
         }
         return (aces - error) / serves;
     }
 
+    //getDigNumbers() will use askForNumbers() to get raw data regarding defensive stats
+    static (double, double, double) getDigNumbers(string whichTeam)
+    {
+        (double attempts, double digs, double errors) digStats;
+        
+        digStats = askForNumbers("digs", "digs", whichTeam);
+        return digStats;
+    }
+    
     //dig percentages are calculated (digs - error)/attempts, similar to hitting it is just a decimal going to the thousandths
-    static double digPercentages(double attempts, double digs, double errors, string whichTeam)
+    static double digPercentages((double attempts, double digs, double errors) digNumbers, string whichTeam)
     {
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
-            outputFile.WriteLine($"Dig percentage: ");
+            outputFile.WriteLine($"Dig percentage: {(digNumbers.digs - digNumbers.errors) / digNumbers.attempts}");
         }
 
-        return (digs - errors) / attempts;
+        return (digNumbers.digs - digNumbers.errors) / digNumbers.attempts;
     }
 
     //average dig score is calculated by summing all the dig scores and then dividing it by the number
