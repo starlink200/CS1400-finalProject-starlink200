@@ -7,7 +7,6 @@
 *   const
 *   pass-by-reference (in/ref/out)
 *   2d or jagged arrays
-*   switch
 *   string formatting
 *  Finishing Program:
 *   Creating overall avg
@@ -143,11 +142,7 @@ internal class Program
         }
         while(!userInput);
         stats.attempts = num;
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
-        {
-            outputFile.WriteLine($" {stats.attempts} {attemptName} attempts.");
-        }
-        
+
         Console.WriteLine($"Please provide the number of {action} your team got");
         do
         {
@@ -156,14 +151,15 @@ internal class Program
             {
                 Console.WriteLine("Please give a valid number");
             }
+            else if(num > stats.attempts)
+            {
+                Console.WriteLine("The number of {action} cannot be greater than the number of attempts");
+                userInput = false;
+            }
 
         }
         while(!userInput);
         stats.action = num;
-        using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
-        {
-            outputFile.WriteLine($" {stats.action} {action}.");
-        }
 
         Console.WriteLine($"Please provide the number of {attemptName} errors your team had");
         do
@@ -173,12 +169,19 @@ internal class Program
             {
                 Console.WriteLine("Please give a valid number");
             }
+            else if(num + stats.action > stats.attempts)
+            {
+                Console.WriteLine($"Your number of errors combine with number of {action} cannot be greater than the number of attempts");
+                userInput = false;
+            }
 
         }
         while(!userInput);
         stats.errors = num;
         using (StreamWriter outputFile = new StreamWriter(Path.Combine($"{whichTeam}.txt"), true))
         {
+            outputFile.WriteLine($" {stats.attempts} {attemptName} attempts.");
+            outputFile.WriteLine($" {stats.action} {action}.");
             outputFile.WriteLine($" {stats.errors} {attemptName} errors.");
         }
 
