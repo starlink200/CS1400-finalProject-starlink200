@@ -164,17 +164,26 @@ internal class Program
         Console.WriteLine($"Please provide the number of {attemptName} errors your team had");
         do
         {
-            userInput = double.TryParse(Console.ReadLine(), out num);
-            if(!userInput)
+            string userAnswer = Console.ReadLine();
+            userInput = double.TryParse(userAnswer, out num);
+            //if the user would like to reinput the values the method will call itself and run again then return the new values
+            if(userAnswer.ToLower().Equals("r"))
             {
-                Console.WriteLine("Please give a valid number");
+                Console.WriteLine("user answer was r");
+                return askForNumbers(attemptName, action, whichTeam);
             }
-            else if(num + stats.action > stats.attempts)
+            else
             {
-                Console.WriteLine($"Your number of errors combine with number of {action} cannot be greater than the number of attempts");
-                userInput = false;
+                if(!userInput)
+                {
+                    Console.WriteLine("Please give a valid number");
+                }
+                else if(num + stats.action > stats.attempts)
+                {
+                    Console.WriteLine($"Your number of errors combine with number of {action} cannot be greater than the number of attempts. If you need to reinput the number of attempts or {action} press R");
+                    userInput = false;
+                }
             }
-
         }
         while(!userInput);
         stats.errors = num;
